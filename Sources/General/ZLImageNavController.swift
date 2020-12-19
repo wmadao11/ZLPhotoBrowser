@@ -82,5 +82,4 @@ class ZLImageNavController: UINavigationController {
         UIGraphicsEndImageContext()
         return image
     }
-
 }

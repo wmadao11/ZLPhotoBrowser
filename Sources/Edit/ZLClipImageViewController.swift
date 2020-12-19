@@ -149,8 +149,8 @@ class ZLClipImageViewController: UIViewController {
         return true
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+    override var shouldAutorotate: Bool {
+        return false
     }
     
     deinit {
@@ -252,13 +252,16 @@ class ZLClipImageViewController: UIViewController {
         self.bottomToolView.frame = CGRect(x: 0, y: self.view.bounds.height-ZLClipImageViewController.bottomToolViewH, width: self.view.bounds.width, height: ZLClipImageViewController.bottomToolViewH)
         self.bottomShadowLayer.frame = self.bottomToolView.bounds
         
-        self.bottomToolLineView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 1/UIScreen.main.scale)
+        self.bottomToolLineView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 0.5)
         let toolBtnH: CGFloat = 25
         let toolBtnY = (ZLClipImageViewController.bottomToolViewH - toolBtnH) / 2 - 10
-        self.cancelBtn.frame = CGRect(x: 30, y: toolBtnY, width: toolBtnH, height: toolBtnH)
+        let cancelBtnW = localLanguageTextValue(.cancel).boundingRect(font: ZLLayout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: toolBtnH)).width + 20
+        let doneBtnW = localLanguageTextValue(.editFinish).boundingRect(font: ZLLayout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: toolBtnH)).width + 20
+
+        self.cancelBtn.frame = CGRect(x: 20, y: toolBtnY, width: cancelBtnW, height: toolBtnH)
         let revertBtnW = localLanguageTextValue(.revert).boundingRect(font: ZLLayout.bottomToolTitleFont, limitSize: CGSize(width: CGFloat.greatestFiniteMagnitude, height: toolBtnH)).width + 20
         self.revertBtn.frame = CGRect(x: (self.view.bounds.width-revertBtnW)/2, y: toolBtnY, width: revertBtnW, height: toolBtnH)
-        self.doneBtn.frame = CGRect(x: self.view.bounds.width-30-toolBtnH, y: toolBtnY, width: toolBtnH, height: toolBtnH)
+        self.doneBtn.frame = CGRect(x: self.view.bounds.width-doneBtnW-toolBtnH, y: toolBtnY, width: doneBtnW, height: toolBtnH)
         
         let ratioColViewY = self.bottomToolView.frame.minY - ZLClipImageViewController.clipRatioItemSize.height - 5
         self.rotateBtn.frame = CGRect(x: 30, y: ratioColViewY + (ZLClipImageViewController.clipRatioItemSize.height-25)/2, width: 25, height: 25)
@@ -316,12 +319,14 @@ class ZLClipImageViewController: UIViewController {
         self.bottomToolView.layer.addSublayer(self.bottomShadowLayer)
         
         self.bottomToolLineView = UIView()
-        self.bottomToolLineView.backgroundColor = zlRGB(240, 240, 240)
+        self.bottomToolLineView.backgroundColor = zlRGB(153, 153, 153)
         self.bottomToolView.addSubview(self.bottomToolLineView)
         
         self.cancelBtn = UIButton(type: .custom)
-        self.cancelBtn.setImage(getImage("zl_close"), for: .normal)
-        self.cancelBtn.adjustsImageWhenHighlighted = false
+        self.cancelBtn.setTitleColor(.white, for: .normal)
+        self.cancelBtn.setTitle(localLanguageTextValue(.cancel), for: .normal)
+        self.cancelBtn.titleLabel?.font = ZLLayout.bottomToolTitleFont
+        self.cancelBtn.titleLabel?.textAlignment = .left
         self.cancelBtn.zl_enlargeValidTouchArea(inset: 20)
         self.cancelBtn.addTarget(self, action: #selector(cancelBtnClick), for: .touchUpInside)
         self.bottomToolView.addSubview(self.cancelBtn)
@@ -335,8 +340,10 @@ class ZLClipImageViewController: UIViewController {
         self.bottomToolView.addSubview(self.revertBtn)
         
         self.doneBtn = UIButton(type: .custom)
-        self.doneBtn.setImage(getImage("zl_right"), for: .normal)
-        self.doneBtn.adjustsImageWhenHighlighted = false
+        self.doneBtn.setTitleColor(.white, for: .normal)
+        self.doneBtn.setTitle(localLanguageTextValue(.editFinish), for: .normal)
+        self.doneBtn.titleLabel?.font = ZLLayout.bottomToolTitleFont
+        self.cancelBtn.titleLabel?.textAlignment = .right
         self.doneBtn.zl_enlargeValidTouchArea(inset: 20)
         self.doneBtn.addTarget(self, action: #selector(doneBtnClick), for: .touchUpInside)
         self.bottomToolView.addSubview(self.doneBtn)
